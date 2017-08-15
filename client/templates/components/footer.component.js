@@ -13,8 +13,6 @@ Template.HttpTableFooter.onCreated(function () {
   let settings = self.settings.get();
   let TABLE = Tables.registered[settings.table_id];
 
-  self.subManager = TABLE.sub_manager ? TABLE.sub_manager : self;
-
   self.getTotalElems = function () {
     return self.totalElems.get();
   };
