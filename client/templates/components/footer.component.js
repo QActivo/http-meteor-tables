@@ -70,7 +70,7 @@ Template.HttpTableFooter.onRendered(function () {
   }
 
   self.autorun(function () {
-    if (self.handle.ready()) {
+    if (self.ready.get()) {
       let settings = Tracker.nonreactive(() => self.settings.get());
       if (settings.current.entry >= self.getTotalElems() && settings.current.page !== 1) {
         settings.current.page = 1;
