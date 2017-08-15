@@ -1,44 +1,33 @@
-qactivo:meteor-tables
+qactivo:http-meteor-tables
 =====================
 
-A Meteor package that creates reactive DataTables (not the [DataTables](http://datatables.net/)) in an efficient way, allowing you to display custom contents of enormous collections without impacting app performance.
+A Meteor package that creates non-reactive DataTables (not the [DataTables](http://datatables.net/)) in an efficient way, allowing you to display custom contents of enormous collections without impacting app performance.
 This package is designed to work with Twitter Bootstrap 3.
+
+This is based on the [qactivo:meteor-tables](https://github.com/QActivo/meteor-tables) but the strategy used to fetch data is using [Meteor Methods](https://guide.meteor.com/methods.html).
 
 ## Installation
 
 ```bash
-$ meteor add qactivo:meteor-tables
+$ meteor add qactivo:http-meteor-tables
 ```
 
 ## Online Demo App
 
 Coming soon :stuck_out_tongue_winking_eye:
 
-## Motivation
-
-We found ourselves we the need of Data tables easily to customize and some features we didn't found on any meteor package out there:
-
-* We wanted to take full control of what and how data is published to the client.
-* We wanted to decouple each table row from **MeteorTable** to get a self-contained blaze component, this allow to main things:
-  * Customize row events using [Blaze template events](http://blazejs.org/api/templates.html#Template-events).
-  * Customize how data is displayed using [Blaze template helpers](http://blazejs.org/api/templates.html#Template-helpers).
-* The ability to save any table state (sorting, table lengh, etc.).
-* The ability to render columns dinamically.
-* The ability to inject into the template a filter selector that will be used both client and server side reactivelly!.
-* We wanted to write a package easy to adapt and extend.
-
 ## How to use (Example)
 
 ### Client
 
-- [ ] Inject the **MeteorTable** to the html template:
+- [ ] Inject the **HttpMeteorTable** to the html template:
 
 ```html
 <template name="my_todos_template">
   <h2>Todos</h2>
   
   // see Template options below to get more details
-  {{> MeteorTable settings=table_settings}}
+  {{> HttpMeteorTable settings=table_settings}}
 </template>
 ```
 
@@ -64,7 +53,6 @@ TodosController = RouteController.extend({
     return {
       table_settings: {
         table_id: 'todos_table',
-        publication: 'todos_table_pub',
         // this the template created before
         template: 'todo_row',
         collection: Todos,
@@ -89,23 +77,16 @@ TodosController = RouteController.extend({
 
 ### Server 
 
-- [ ] Create a classic Meteor publication as follows (mandatory for now):
-* MUST accept two arguments: `selector`, and `options`.
+We don't have to use anything else, `HttpMeteorTable` will take care of the server-side stuff.
 
-```javascript
-Meteor.publish('todos_table_pub', function (selector, options) {
-  return Todos.find(selector, options);
-});
-```
-
-That's it, easy huh?
+That's it, easier huh?
 
 ## Displaying Only Part of a Collection's Data Set
 
-Add a [Mongo-style selector](https://docs.meteor.com/#/full/selectors) to your `MeteorTable` component for a table that displays only one part of a collection:
+Add a [Mongo-style selector](https://docs.meteor.com/#/full/selectors) to your `HttpMeteorTable` component for a table that displays only one part of a collection:
 
 ```html
-{{> MeteorTable settings=table_settings filter=selector}}
+{{> HttpMeteorTable settings=table_settings filter=selector}}
 ```
 
 ```js
@@ -154,7 +135,7 @@ This will generate a new `selector` including this filter to be sent to the publ
 
 ## Publishing Extra Fields
 
-If your table's templates,  helper functions or table settings selector require fields that are not included in the data, you can tell MeteorTable to publish these fields by including them in the `extra_fields` array option:
+If your table's templates,  helper functions or table settings selector require fields that are not included in the data, you can tell HttpMeteorTable to publish these fields by including them in the `extra_fields` array option:
 
 ```js
 table_settings: {
@@ -167,7 +148,7 @@ table_settings: {
 
 Should you require the current state of pagination, sorting, search, etc to be saved you can use the option `state_save`.
 
-Add `state_save` as a property when defining the **MeteorTable**.
+Add `state_save` as a property when defining the **HttpMeteorTable**.
 
 ```js
 table_settings: {
@@ -183,7 +164,7 @@ Please note that the use of the HTML5 APIs for data storage means that the built
 
 ## Default column order
 
-Unless there is a saved state, you can provide to **MeteorTable** your desired column sort using the `default_sort` option:
+Unless there is a saved state, you can provide to **HttpMeteorTable** your desired column sort using the `default_sort` option:
 
 ```js
 table_settings: {
@@ -193,11 +174,11 @@ table_settings: {
   }
 }
 ```
-If you don't specify any order criteria, by default **MeteorTable** will take the first non-searchable column or will not apply sorting at all.
+If you don't specify any order criteria, by default **HttpMeteorTable** will take the first non-searchable column or will not apply sorting at all.
 
 ## Specify select entries
 
-Customize the select length menu displayed by **MeteorTable** using the `entries` option:
+Customize the select length menu displayed by **HttpMeteorTable** using the `entries` option:
 
 ```js
 table_settings: {
@@ -227,15 +208,15 @@ table_settings: {
 | Property                  | Type             | Details                                                                                         |
 |---------------------------|------------------|-------------------------------------------------------------------------------------------------|
 | `table_id`                | string           | Table indentifier.                                                                              |
-| `publication`             | string           | Publication name, **MeteorTable** will subscribe to this publication.                           |
+| `publication`             | string           | Publication name, **HttpMeteorTable** will subscribe to this publication.                           |
 | `template`                | string           | Template name to be used to render each one of the items found as table's row.                  |
 | `collection`              | Mongo.Collection | Mongo collection used to fetch data.                                                            |
-| `fields`                  | array      | Columns to be rendered by **MeteorTable** : <ul><li>`title` - column name.</li><li>`data`- collection property.</li><li>`orderable`- whether or not the column should be orderable (default `true`).</li><li>`searchable`- whether or not the column should be searchable (default `true`).</li><li>`search_fields`- in case we have a column where its data is an object, we specify this array with its properties, otherwise this must be set as `searchable: false`</li>  |
-| `entries` (optional)      | array            | This parameter allows you to specify the length options that **MeteorTable** shows at top left of the table (default `[10, 25, 50, 100]`).         |
+| `fields`                  | array      | Columns to be rendered by **HttpMeteorTable** : <ul><li>`title` - column name.</li><li>`data`- collection property.</li><li>`orderable`- whether or not the column should be orderable (default `true`).</li><li>`searchable`- whether or not the column should be searchable (default `true`).</li><li>`search_fields`- in case we have a column where its data is an object, we specify this array with its properties, otherwise this must be set as `searchable: false`</li>  |
+| `entries` (optional)      | array            | This parameter allows you to specify the length options that **HttpMeteorTable** shows at top left of the table (default `[10, 25, 50, 100]`).         |
 | `selector` (optional)     | object           | A [Mongo-style selector](https://docs.meteor.com/#/full/selectors) to filter both client and server side data. |
 | `extra_fields` (optional) | array            | Array of collection properties to be published to the client.                                   |
 | `default_sort` (optional) | object           | A [Mongo-style sort](https://docs.meteor.com/api/collections.html#sortspecifiers) for initial column sort (by default will take the first column non-orderable). Only `Object` style sort is supported!.                      |
-| `state_save` (optional)   | boolean          | Enable or disable state saving. When enabled **MeteorTable** will store state information such as pagination position, display length, filtering and sorting (default `false`).   |
+| `state_save` (optional)   | boolean          | Enable or disable state saving. When enabled **HttpMeteorTable** will store state information such as pagination position, display length, filtering and sorting (default `false`).   |
 | `dynamic_fields` (optional)   | array          | Columns to be rendered dynamically. This option will enable a dropdown button on top of the table with all the fields specified in there. You can use the same options as used with `fields` (`searchable`, `orderable`, etc.). |
 | `hard_limit` (optional)   | number           | If provided will restrict how many items will be available to the client.                       |
 | `classes` (optional)      | string           | Allow to change the table style. By default will apply bootstrap classes `.table` and `.table-hover` |
