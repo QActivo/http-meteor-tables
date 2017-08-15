@@ -1,11 +1,11 @@
-Template.table_header.onCreated(function () {
+Template.http_table_header.onCreated(function () {
   let self = this;
 
   self.settings = self.data.settings;
   self.fields = self.data.fields;
 });
 
-Template.table_header.events({
+Template.http_table_header.events({
   'click .sorting': function (e, template) {
     e.preventDefault();
     
@@ -46,7 +46,7 @@ Template.table_header.events({
   }
 });
 
-Template.table_header.helpers({
+Template.http_table_header.helpers({
   // updates the view
   sortingClass: (column) => {
     let settings = Template.instance().settings.get();

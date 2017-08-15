@@ -1,7 +1,8 @@
-Template.MeteorTable.onCreated(function () {
+Template.HttpMeteorTable.onCreated(function () {
   let self = this;
   
   self.ready = new ReactiveVar();
+  self.dataset = new ReactiveVar([]);
 
   let data = Template.currentData().settings;
 
@@ -20,8 +21,6 @@ Template.MeteorTable.onCreated(function () {
   });
 
   let state = TABLE.state_save ? Helpers.loadState(data.table_id) : null;
-
-  self.subManager = TABLE.sub_manager ? TABLE.sub_manager : self;
 
   self.settings = new ReactiveVar({
     table_id: data.table_id,
@@ -50,13 +49,6 @@ Template.MeteorTable.onCreated(function () {
   self.options = new ReactiveVar({});
   self.filter = new ReactiveVar({});
   self.queryResult = new ReactiveVar(0);
-  self.recordsIds = new ReactiveVar([]);
-
-  self.autorun(function () {
-    let cursor = Tables.tableRecords.find({table_id: data.table_id});
-
-    self.recordsIds.set(cursor.map(d => d._id));
-  });
 
   self.autorun(function () {
     let externalFilter = Template.currentData().filter;
@@ -89,19 +81,18 @@ Template.MeteorTable.onCreated(function () {
   let handle = {};
 
   self.autorun(function () {
-    handle = self.subManager.subscribe(TABLE.pub, self.selector.get(), self.options.get(), function onReady () {
-      self.ready.set(TABLE.sub_manager ? false : true);
-    });
-  });
+    self.ready.set(false);
 
-  self.autorun(function () {
-    var ready = null;
-    
-    if (TABLE.sub_manager) {
-      ready = handle.ready();
-    }
+    Meteor.call(
+      'httptables.collection-data',
+      TABLE.collection._name,
+      self.selector.get(),
+      self.options.get(),
+      function (_err, _res) {
+        self.ready.set(true);
 
-    self.ready.set(ready);
+        self.dataset.set(_res);
+      });
   });
   
   self.autorun(function () {
@@ -121,29 +112,19 @@ Template.MeteorTable.onCreated(function () {
   });
 
   self.getData = function () {
-    let cursor = TABLE.collection.find({
-      _id: {
-        $in: self.recordsIds.get()
-      }
-    }, 
-      _.pick(self.options.get(), 'sort')
-    );
+    const res = self.dataset.get();
 
-    self.queryResult.set(cursor.count());
+    self.queryResult.set(res.length);
 
-    return cursor;
+    return res;
   }
 });
 
-Template.MeteorTable.onRendered(function () {
+Template.HttpMeteorTable.onRendered(function () {
   let self = this;
 });
 
-Template.MeteorTable.events({
-  // some events
-});
-
-Template.MeteorTable.helpers({
+Template.HttpMeteorTable.helpers({
   ready: () => {
     return Template.instance().ready.get();
   },

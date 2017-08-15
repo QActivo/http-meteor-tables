@@ -1,4 +1,4 @@
-Template.TableFooter.onCreated(function () {
+Template.HttpTableFooter.onCreated(function () {
   let self = this;
 
   self.settings = self.data.settings;
@@ -6,43 +6,42 @@ Template.TableFooter.onCreated(function () {
   self.options = self.data.options;
   self.queryResult = self.data.result;
 
+  self.totalItems = new ReactiveVar(0);
+  self.totalElems = new ReactiveVar(0);
+  self.ready = new ReactiveVar(false);
+
   let settings = self.settings.get();
   let TABLE = Tables.registered[settings.table_id];
 
   self.subManager = TABLE.sub_manager ? TABLE.sub_manager : self;
 
   self.getTotalElems = function () {
-    return Counts.get('total_elems_'.concat(settings.table_id));
+    return self.totalElems.get();
   };
 
   self.autorun(function () {
-    self.subscribe('tables.collection.total_elems', 
-      settings.table_id,
+    self.ready.set(false);
+
+    Meteor.call(
+      'httptables.collection.total_elems',
       TABLE.collection._name,
-      self.selector.get()
-    );
-  });
-
-  self.autorun(function () {
-    self.handle = self.subscribe('tables.collection.info', 
-      settings.table_id, 
-      TABLE.collection._name, 
       self.selector.get(),
-      self.options.get()
-    );
+      function (err, res) {
+        self.ready.set(true);
+
+        self.totalElems.set(res);
+      });
   });
 
-  self.elemsFound = new ReactiveVar(0);
-
   self.autorun(function () {
-    self.elemsFound.set(Math.min(
+    self.totalItems.set(Math.min(
       self.getTotalElems(),
       settings.hard_limit
     ));
   });
 });
 
-Template.TableFooter.onRendered(function () {
+Template.HttpTableFooter.onRendered(function () {
   let self = this;
 
   let settings;
@@ -50,16 +49,18 @@ Template.TableFooter.onRendered(function () {
   self.autorun(function () {
     settings = self.settings.get();
     
-    self.$('.pagination').pagination({
-      items: self.elemsFound.get(),
-      currentPage: settings.current.page,
-      itemsOnPage: settings.current.entry,
-      displayedPages: 3,
-      edges: 1,
-      ellipsePageSet: false,
-      disableAnchors: true,
-      onPageClick: onPageClick
-    });
+    self.$('.pagination')
+      .pagination({
+        items: self.totalItems.get(),
+        currentPage: settings.current.page,
+        itemsOnPage: settings.current.entry,
+        displayedPages: 3,
+        edges: 1,
+        ellipsePageSet: false,
+        disableAnchors: true,
+        onPageClick: onPageClick
+      })
+      .pagination(self.ready.get() ? 'enable' : 'disable');
   });
 
   function onPageClick (pageNumber, e) {   
@@ -81,7 +82,8 @@ Template.TableFooter.onRendered(function () {
   });
 });
 
-Template.TableFooter.helpers({
+Template.HttpTableFooter.helpers({
+  ready: () => Template.instance().ready.get(),
   formatNumber: (number) => numeral(number).format('0,0'),
   result: () => {
     let settings = Template.instance().settings.get();
@@ -92,7 +94,7 @@ Template.TableFooter.helpers({
     return {
       beginPage: Math.min(offsetPage, itemsFound),
       endPage: itemsFound,
-      total: Template.instance().elemsFound.get()
+      total: Template.instance().totalItems.get()
     };
   }
 })

@@ -1,4 +1,4 @@
-Template.TableHeader.onCreated(function () {
+Template.HttpTableHeader.onCreated(function () {
   let self = this;
 
   self.settings = self.data.settings;
@@ -33,13 +33,13 @@ Template.TableHeader.onCreated(function () {
     Session.set(self.settings.get().session_id, []);
 });
 
-Template.TableHeader.onRendered(function () {
+Template.HttpTableHeader.onRendered(function () {
   let self = this;
 });
 
 var timeoutId;
 
-Template.TableHeader.events({
+Template.HttpTableHeader.events({
   'keyup #search-box': function (e, template) {
     e.preventDefault();
     
@@ -90,7 +90,7 @@ Template.TableHeader.events({
   }
 });
 
-Template.TableHeader.helpers({
+Template.HttpTableHeader.helpers({
   selectedEntry: (entry) => {
     return entry === Template.instance().settings.get().current.entry ? 'active' : '';
   },

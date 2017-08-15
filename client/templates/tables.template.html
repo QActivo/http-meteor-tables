@@ -1,6 +1,6 @@
-<template name="MeteorTable">
+<template name="HttpMeteorTable">
   <div class="meteor-table-wrapper">
-    {{> TableHeader settings=settings selector=selector fields=fields filter=filter}}
+    {{> HttpTableHeader settings=settings selector=selector fields=fields filter=filter}}
     
     <div class="table-wrapper">
       
@@ -8,30 +8,30 @@
         <thead>
           <tr>
             {{#each column in table_headers}}
-              {{> table_header settings=settings fields=fields column=column}}
+              {{> http_table_header settings=settings fields=fields column=column}}
             {{/each}}
           </tr>
         </thead>
         <tbody>
           
-            {{#each documents}}
-              {{> Template.dynamic template=template }}
-            {{/each}}
-            {{#if noData}}
-              <tr>
-                <td>No data available in table</td>
-              </tr>
-            {{/if}}
+          {{#each documents}}
+            {{> Template.dynamic template=template }}
+          {{/each}}
+          {{#if noData}}
+            <tr>
+              <td>No data available in table</td>
+            </tr>
+          {{/if}}
           
         </tbody>
       </table>
     
     </div>
     
-    {{> TableFooter settings=settings selector=selector options=options result=result}}
+    {{> HttpTableFooter settings=settings selector=selector options=options result=result}}
 
     {{#unless ready}}
-      {{> MeteorTablesLoading}}
+      {{> HttpMeteorTablesLoading}}
     {{/unless}}
   </div>
 </template>
