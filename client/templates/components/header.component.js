@@ -40,6 +40,14 @@ Template.HttpTableHeader.onRendered(function () {
 var timeoutId;
 
 Template.HttpTableHeader.events({
+  'click #refresh-http-table': function (e, template) {
+    e.preventDefault();
+    
+    // SIMULATES A REFRESH
+    let settings = Template.instance().settings.get();
+    
+    Template.instance().settings.set(settings);
+  },
   'keyup #search-box': function (e, template) {
     e.preventDefault();
     

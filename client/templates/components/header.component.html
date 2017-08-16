@@ -9,6 +9,12 @@
           <li class="{{selectedEntry item}}" role="presentation"><a href="#" data-entry="{{item}}">{{item}}</a></li>
         {{/each}}
         &nbsp;entries
+
+        <li>
+          <a class="btn btn-info btn-xs pull-right" href="#" id="refresh-http-table">
+            <i class="fa fa-refresh" style="color: white;"></i>
+          </a>
+        </li>
       </ul>
       {{#if settings.dynamic_fields}}
         <div class="dropdown">
