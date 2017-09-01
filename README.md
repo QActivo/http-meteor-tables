@@ -18,7 +18,7 @@ Coming soon :stuck_out_tongue_winking_eye:
 
 ## How to use (Example)
 
-### Client
+# Client
 
 - [ ] Inject the **HttpMeteorTable** to the html template:
 
@@ -75,7 +75,7 @@ TodosController = RouteController.extend({
 });
 ```
 
-### Server 
+# Server 
 
 We don't have to use anything else, `HttpMeteorTable` will take care of the server-side stuff.
 
@@ -210,7 +210,7 @@ table_settings: {
 | `table_id`                | string           | Table indentifier.                                                                              |
 | `template`                | string           | Template name to be used to render each one of the items found as table's row.                  |
 | `collection`              | Mongo.Collection | Mongo collection used to fetch data.                                                            |
-| `fields`                  | array      | Columns to be rendered by **HttpMeteorTable** : <ul><li>`title` - column name.</li><li>`data`- collection property.</li><li>`orderable`- whether or not the column should be orderable (default `true`).</li><li>`searchable`- whether or not the column should be searchable (default `true`).</li><li>`search_fields`- in case we have a column where its data is an object, we specify this array with its properties, otherwise this must be set as `searchable: false`</li>  |
+| `fields`                  | array      | Columns to be rendered by **HttpMeteorTable** : <ul><li>`title` - column name.</li><li>`data`- collection property.</li><li>`orderable`- whether or not the column should be orderable (default `true`).</li><li>`searchable`- whether or not the column should be searchable (default `true`).</li><li>`search_fields`- in case we have a column where its data is an object, we specify this array with its properties, otherwise this must be set as `searchable: false`</li><li>`options`- you can add here [MongoDB Projection Operators](https://docs.mongodb.com/manual/reference/operator/projection/)</li></ul>  |
 | `entries` (optional)      | array            | This parameter allows you to specify the length options that **HttpMeteorTable** shows at top left of the table (default `[10, 25, 50, 100]`).         |
 | `selector` (optional)     | object           | A [Mongo-style selector](https://docs.meteor.com/#/full/selectors) to filter both client and server side data. |
 | `extra_fields` (optional) | array            | Array of collection properties to be published to the client.                                   |
