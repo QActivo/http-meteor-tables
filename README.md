@@ -4,7 +4,7 @@ qactivo:http-meteor-tables
 A Meteor package that creates non-reactive DataTables (not the [DataTables](http://datatables.net/)) in an efficient way, allowing you to display custom contents of enormous collections without impacting app performance.
 This package is designed to work with Twitter Bootstrap 3.
 
-This is based on the [qactivo:meteor-tables](https://github.com/QActivo/meteor-tables) but the strategy used to fetch data is using [Meteor Methods](https://guide.meteor.com/methods.html).
+This is based on the [qactivo:meteor-tables](https://github.com/toptive/meteor-tables) but the strategy used to fetch data is using [Meteor Methods](https://guide.meteor.com/methods.html).
 
 ## Installation
 
