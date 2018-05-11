@@ -2,7 +2,7 @@ Package.describe({
   name: 'qactivo:http-meteor-tables',
   summary: 'Datatables for large or small datasets in Meteor',
   git: 'https://github.com/toptive/http-meteor-tables.git',
-  version: '1.0.4'
+  version: '1.0.5'
 });
 
 Package.onUse(function (api) {
